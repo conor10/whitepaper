@@ -1,0 +1,463 @@
+\documentclass[9pt,oneside]{amsart}
+
+\usepackage[utf8x]{inputenc}
+\usepackage{url}
+\usepackage{cancel}
+\usepackage{xspace}
+\usepackage{multicol}
+\usepackage{subfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[a4paper,width=170mm,top=18mm,bottom=22mm,includeheadfoot]{geometry}
+\usepackage{array}
+\usepackage{verbatim}
+\usepackage{caption}
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{pdflscape}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{afterpage}
+
+\theoremstyle{plain}
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\usepackage[foot]{amsaddr}
+
+\makeatletter
+\renewcommand{\email}[2][]{
+	\ifx\emails\@empty\relax\else{\g@addto@macro\emails{,\space}}\fi
+	\@ifnotempty{#1}{\g@addto@macro\emails{\textrm{(#1)}\space}}
+	\g@addto@macro\emails{#2}
+}
+\makeatother
+
+\title{Melon protocol: A Network Protocol for Digital Asset Management Strategies \\ {\smaller \textbf{Draft}}}
+
+\author{Reto Trinkler}
+\email[Reto Trinkler]{rt@melonport.com}
+
+\author{Mona El Isa}
+\email[Mona El Isa]{me@melonport.com}
+
+\begin{document}
+	
+\begin{abstract}
+	
+The Melon protocol is a network protocol for digital asset management on the Ethereum platform. It enables participants to set up, manage and invest in digital asset management strategies in an open, competitive and decentralised manner.
+
+\end{abstract}
+
+\maketitle
+
+\setlength{\columnsep}{20pt}
+
+\begin{multicols}{2}
+	
+\section{Introduction}\label{sec:introduction}
+
+The value and importance of a wide range of digital assets\footnote{Throughout the present work, a \textit{digital asset}, is regarded as a digital token of value, run and stored on the Ethereum Blockchain. There is no technical difference assumed between what an \textit{asset} and what a \textit{token} is, the terms are interchangeable. However in the context of portfolio management usually the term \textit{asset} is used.} has risen dramatically over the last few years. Hence the question naturally arises how to manage this new and fast-growing asset class in the most advantageous way.
+
+This could be done by investing in a hedge fund which specializes in digital assets. 
+
+However, the lack of standardisation can make comparison of fund performances difficult and fund auditing practices can be very opaque.
+
+A second deterrent, is the time and high cost required for setting up and running a hedge fund. This limits the range of possible hedge fund managers to a comparatively small group of people. It arguably also limits competition between hedge funds creating qualitatively less good hedge fund performances\cite{mitstudy}. 
+
+A third deterrent to investing in a hedge fund is some of the outdated technological infrastructure, giving room for a lot of inefficiencies.
+
+Section \ref{sec:assets} through \ref{sec:investing} of this paper will discuss the general mechanics of the Melon protocol.
+Section \ref{sec:open} through \ref{sec:decentralised} will discuss how the Melon protocol can be used to solve above objectives of openness, competitiveness and security.
+Finally, section \ref{sec:protocoldevelopment} will propose a solution for protocol development.
+
+\section{Assets}\label{sec:assets}
+
+To better understand the general mechanics of the Melon protocol, lets start by defining the term \textit{digital asset management strategy}. A digital asset management strategy is, in the context of this paper, regarded as a strategy on how to manage a \textit{portfolio}\footnote{Throughout the present work, a \textit{portfolio} is regarded as a finite set of digital assets.}.
+Each portfolio can hold a variety of digital assets, where these digital assets represent the value a portfolio can hold.
+
+As a motivation to the challenge ahead, let's look at a few examples of these digital assets currently available, or in development.
+
+For the sake of ease, and to highlight the differentiation in underlying value, we categorise digital assets into three sets: Digital assets which gain their value from collateralisation of an underlying asset, called \textit{collateralised assets}. Digital assets which do not gain their value from collateralisation, called \textit{un-collateralised assets}. Finally, digital assets which are derived from existing digital assets called \textit{derivatives}.
+
+\subsection{Collateralised Assets}\label{sub:altcoins}
+
+Collateralised Assets, are assets which gain their value from the collateralisation of \textit{real-world assets}.
+Examples are Dai from the Dai Credit System\cite{makerdao}, Dassets\cite{string:technology} from String Technology or t0\cite{t0} from Overstock. An example for a digital asset backed by a commodity is DGX from Digix\cite{digix} which binds the value of gold to a digital asset.
+
+
+\subsection{Un-collateralised Assets}\label{sub:coins}
+
+Un-collateralised assets are digital assets which gain their value in the scarcity of the token itself.
+Examples for un-collateralised assets are ETH (Ethereum\cite{ethereum}), ETC (Ethereum Classic\cite{ethereumclassic}), REP (Augur\cite{augur}), DGD (Digix\cite{digix}) or MKR (Maker\cite{makerdao}). Eventually even companies issuing tokens as shares on the Blockchain will belong to this set.
+
+\subsection{Derivatives}\label{sub:derivatives}
+
+The third set of digital assets are derivatives of other digital assets. In the context of this work, a \textit{derivative} is defined as a digital asset which has its value directly derived from another digital asset.
+An example for this set is a contract for difference (CFD) of an existing digital asset.
+
+In conclusion, the restriction to digital assets will be with the adoption of Ethereum and the various decentralised applications and services built upon it be less and less restrictive.
+
+\section{Portfolio}\label{sec:portfolio}
+
+Having seen the selection of digital assets waiting to be managed by up-and-coming Portfolio Managers, let's now discuss the general mechanics of how this can be achieved technically.
+
+Each portfolio consists of a \textit{core} part and a set of \textit{modules} (see figure \ref{fig:protocolversion})
+
+\subsection{Core}\label{sub:core}
+
+The core part, written in a set of smart-contracts, can be seen as the part which holds everything together. The modules, also written in a set of smart-contracts, can be seen as the auxiliary functionality to the core part. The core part together with a set of rules on how the core interacts with its modules constitute the \textit{Melon protocol}.
+
+\subsection{Modules}\label{sub:modules}
+
+The modules provide auxiliary functionality to the core part. For example, providing off-chain data, storing of portfolio relevant data or the executing of calculations for the portfolio.
+
+The modules are the parts of the portfolio which have subjective functionality. Through the modular concept of the portfolio, these subjective parts can be changed. For example different Portfolio Managers might want to charge different management fees and apply their own methods on how to calculate these fees. The modular concept allows the managers to chose the management fee module of their liking. Thus they can select the fees and calculation methodology by simply linking the corresponding module to the core.
+
+\end{multicols}
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=135mm]{"images/Melon Protocol Version".jpg}
+	\caption{Protocol version links existing portfolios and collects licensing fees \label{fig:protocolversion}}
+\end{figure}
+
+\begin{multicols}{2}
+
+Modules can be freely developed by anyone. Developers can then define a commission that is paid back to them every time someone uses their module.
+
+The Melon protocol includes the following modules as a foundation:
+
+\begin{description}
+	\item[Registrar] Links assets to price feeds to trading.
+	\item[Functionality] A way to build assets specific functionality.
+	\item[Price Feeds] Provide a price for an asset by taking one or several data sources into account.    
+	\item[Exchanges] On-chain marketplaces such as EtherEx\cite{etherex} or Maker-otc\cite{maker-otc}, where one or a set of assets can be traded.
+	\item[Trading] A set of rules on how trading is permitted.
+	\item[Management Fee] A gross asset value (see appendix \ref{app:defgav}) independent payment for the Portfolio Manager.
+	\item[Performance Fee] A gross asset value (see appendix \ref{app:defgav}) dependent payment for the Portfolio Manager.
+\end{description}
+
+In the \textit{registrar module}, the Portfolio Manager selects a finite amount of assets as well as a finite amount of exchanges on which these assets can be traded. All a Portfolio Manager can ever do is trade those specific assets on those specific exchanges. The smart contracts do not allow funds to be sent in any other way or to any other accounts.  
+
+The \textit{functionality module} allows a Portfolio Manager to retain \textit{actions} or \textit{rights} and avoid penalization from non-action (eg. Augur’s REP tokens). These interactions between token custodian and corresponding smart-contracts need to be programmed in as it is no longer an individual's or non-contract account which controls these funds.
+
+The \textit{price feeds module} is needed as asset prices, in general, tend to be different on different exchanges. This is because of the inherent way prices are set - a price is set by demand and supply which constitutes of market participants wanting to buy or sell. In this context, the word \textit{market participants} also refers to trading algorithms, etc. In general, market participants reflect a different demand and supply profile on different exchanges generating different bid/ask prices. While it's true that arbitrageurs keep the differences small, they remain, for at least as long as there is a fee to be paid on the execution of trades. A fee might be a commission to the exchange or broker, or a fee in form of another execution cost, such as for example the gas cost to be paid on the Ethereum network. To solve the problem of ambiguous prices, the Melon protocol will require the Portfolio Manager to choose one price feed module providing one specific price against which the assets under management (AUM) are evaluated.
+
+The \textit{exchange module} specifies an on-chain exchange where assets can be traded. This is required as it poses a restriction on where the Portfolio Manager can trade his/her funds. See also registrar module.
+
+The \textit{trading module} restricts trading and links to a preselected exchange on which an asset can be traded. For example, no trade size can be higher than 10\% of the volume traded of this asset. This module is intended to reduce the amount of order book manipulation in favour of the Portfolio Manager.
+
+A Portfolio Manager will be able to receive a management fee as well as a performance fee. These fees are specified in the \textit{management fee module} and the \textit{performance fee module}. The management fee is generally calculated by reference to the assets under management, i.e. the gross asset value (see appendix \ref{app:defgav}) of the portfolio. The performance fee is generally calculated by reference to the \textit{increase} in the gross asset value. There is usually a high water mark, which means that if the portfolio performing below a defined benchmark since inception, the Portfolio Manager does not get paid a performance fee. Alternative forms of performance fees are conceivable. For example, the interval by which the performance fee gets paid out can be selected by the Portfolio Manager.
+
+Before the deployment of a portfolio, a Portfolio Manager decides which modules he/she would like to use.
+
+Once the portfolio is deployed this then can be seen as the offering of a legal contract. The contract terms are unambiguously visible and securely held by the Blockchain. Therefore, the \textit{smart-contract terms} are agreed upon by the investor upon investing in the portfolio.
+	
+\section{Investing and Redeeming}\label{sec:investing}
+
+There are two ways to invest in a portfolio. The first way is to buy \textit{shares} of the portfolio on any marketplace on which they are traded. The second way is to \textit{create} shares by investing Ether directly into the respective smart contract of the portfolio.
+
+Similar to investing there are three ways to redeem from a portfolio. The first way is to sell \textit{shares} of the portfolio on any marketplace on which they are traded. And the second way is to \textit{annihilate} shares.
+This can be done by
+\begin{itemize}
+	\item redeeming into a separate portfolio or
+	\item redeeming directly into Ether via a program trade\footnote{A program trade is a trade where orders are entered directly into the market and executed automatically.}.
+\end{itemize}
+
+\subsection{Net Asset Value}\label{sub:defshares}
+
+Shares of a portfolio are designed such that they fulfil the following properties:
+\begin{itemize}
+	\item Shares are fungible.
+	\item Shares reflect ownership of the portfolio.
+	\item The inherent value of the shares is given by the value of the underlying assets of the portfolio.
+	\item Share price is \textit{relatively} independent of investments and withdrawals made.
+\end{itemize}
+
+Shares will be represented by a smart-contract following the Ethereum token standard\cite{tokenstandard}. Thus they are fungible and tradable on exchanges such as EtherEx\cite{etherex} or Maker-otc\cite{maker-otc}. Furthermore, Portfolio Managers can hold and manage shares of other portfolios.
+
+Shares also reflect ownership of the portfolio, where the formula of ownership is the following:
+
+\begin{equation}
+	\textit{Ownership} = \frac{\textit{Shares holding}}{\textit{Total shares in existence}}
+\end{equation}
+
+For example if one holds ten out of a hundred total shares then the ownership is $0.1$ or $10\%$. This is dynamic, as people invest and redeem the total amount of shares in existence changes and therefore also the percentage of ownership. 
+
+The inherent share price (see appendix \ref{app:defshareprice}) is \textit{defined} by the net asset value per share (see appendix \ref{app:defnavps}) and thus by the value of the underlying assets.
+
+Every time an Investor invests Ether in a portfolio, shares are created and every time an Investor redeems Ether, shares are exchanged against the value of the underlying assets and thereby annihilated. This mechanism of creating and annihilating shares keeps the share price \textit{relatively} independent of investments respective to withdrawals made.
+
+In conclusion, the inherent share price is set, not by demand, but by performance. Each investor has the ability to exchange its shares at any time against the value of the underlying assets. 
+
+\subsection{Creation}\label{sub:creation}
+
+By investing funds $F$ denominated in Ether, into a portfolio, shares are created. The Investor sends these funds directly to the smart contract of the portfolio where they are added to the portfolio $\underline{h}_m^{t_i}$ (see appendix \ref{app:defportfolio}):
+\begin{equation*}
+	\begin{pmatrix}
+		h_{a_{1}}^{t_i}\\
+		h_{a_{2}}^{t_i}\\
+		\vdots \\
+		h_{a_{n}}^{t_i}
+	\end{pmatrix}
+	\rightarrow
+	\begin{pmatrix}
+		h_{a_{1}}^{t_i} + F\\
+		h_{a_{2}}^{t_i}\\
+		\vdots \\
+		h_{a_{n}}^{t_i}
+	\end{pmatrix}
+\end{equation*}
+Where by convention $h_{a_{1}}^{t_i}$ is the amount of Ether the portfolio $m$ holds, at time $t_i$.
+
+Then the \textit{quantity of shares} $q_{F}^{t_i}$ created for funds $F$, at time $t_i$ is calculated. The formula is the following:
+\begin{equation}
+	q_{F}^{t_i} = \frac{F}{p_{m}^{t_i}}
+\end{equation}
+Note, by definition the share price $p_{m}^{t_i}$ is independent of Funds $F$ invested.
+
+The quantity of shares $q_{F}^{t_i}$ are then allocated to the Investor. For the investment to get incorporated takes at least one block time, i.e. more than 10 to 19 seconds. During this time period the share price might change. However the Investor will be able to invest via a limit order hence they have no risk of getting an unexpected price.
+
+\subsection{Annihilation}\label{sub:annihilation}
+
+By redeeming funds $F$ denominated in Ether, from a portfolio, shares are annihilated. The investor redeems funds $F$ by exchanging shares against the underlying value they represent.
+
+To request a withdrawal of amount $F$, one has to withdraw:
+\begin{equation}
+	q_{F}^{t_i} = \frac{F}{p_{m}^{t_i}} \quad \big( \Leftrightarrow F = p_{m}^{t_i}q_{F}^{t_i} \big)
+\end{equation}
+of shares.
+
+This quantity of shares $q_{F}^{t_i}$ represents a percentage of ownership, called $o_{F}^{t_i}$. The formula for $o_{F}^{t_i}$ is the following:
+
+\begin{equation}
+	o_{F}^{t_i} = \frac{q_{F}^{t_i}}{\textit{Total shares in existence}}
+\end{equation}
+
+The Investor now redeems this percentage of all the assets a portfolio holds, directly from the smart contract of the portfolio. In doing so he/she sets up a new portfolio. The new portfolio of the Portfolio Manager is thus:
+
+\begin{equation*}
+	\begin{pmatrix}
+		h_{a_{1}}^{t_i}\\
+		h_{a_{2}}^{t_i}\\
+		\vdots \\
+		h_{a_{n}}^{t_i}
+	\end{pmatrix}
+	\rightarrow
+	(1 -
+	o_{F}^{t_i})
+	\begin{pmatrix}
+		h_{a_{1}}^{t_i}\\
+		h_{a_{2}}^{t_i}\\
+		\vdots \\
+		h_{a_{n}}^{t_i}
+	\end{pmatrix}
+\end{equation*}
+
+Where the separated part, is the part which belongs to the Investor, redeeming funds:
+\begin{equation*}
+	o_{F}^{t_i}
+	\begin{pmatrix}
+		h_{a_{1}}^{t_i}\\
+		h_{a_{2}}^{t_i}\\
+		\vdots \\
+		h_{a_{n}}^{t_i}
+	\end{pmatrix}
+\end{equation*}
+
+This separated part can now be seen as the portfolio of the investor. The investor becomes its own Portfolio Manager. They can now either decide to manage this new portfolio to their liking or liquidate the assets to Ether through a program trade. A program trade is an algorithm that liquidates a portfolio to complete the redeeming process.
+
+Since portfolios separate when redeeming funds, one cannot directly expect or anticipate any future trades made by the redeeming investor. All one can see on the Blockchain is the separating of the portfolio. This process can be done in a simple and convenient way, where the investor chooses his/her selling off strategy on an off-chain server which listens to the Blockchain and trades accordingly.
+
+\subsection{Open and closed-ended portfolios}\label{sub:closed}
+
+Generally one differentiates between two types of portfolios. \textit{open-ended portfolios} and \textit{closed-ended portfolios}. The difference between the two is that in the former there's no limit on how much investors can invest while in the latter there is. In a closed-ended portfolio, once the investment limit of the portfolio has been reached the process of creation will be suspended. At this point, shares can only be bought on exchanges.
+
+In conclusion, the Investor is always in control of their investment and can exchange back shares to get the underlying value of the assets without having to ask for permission from the Portfolio Manager or anybody else.
+
+\section{Open}\label{sec:open}
+
+As seen in section \ref{sec:investing}, portfolio share prices are defined by the net asset value per share. This is true for each portfolio deployed, meaning that share price of all Melon protocol portfolios are visible and comparable on the Blockchain. The Portfolio Manger's managing and trading track-record is visible and auditable in the same way.
+
+In addition, all of the Melon protocols' smart contracts are open-source\footnote{They are published under \url{https://github.com/melonproject}.}. 
+
+In conclusion, the Melon protocol is an open-source network protocol. Portfolio track-records and performances are visible and auditable by everyone.
+
+\section{Competitive}\label{sec:competitive}
+
+The competitive gains of the Melon protocol are in the form of lower cost and time barriers to setting up and running a portfolio.
+
+The costs and complexity to setting up a portfolio using the Melon protocol are lower than they are with traditional asset management, seconds and cents versus months and millions. Such benefits will favour all investors, but especially large scale money managers for whom the majority of operating costs will be eliminated (well over 50\% of a typical asset management firm’s costs today are made up of fund administration and operations infrastructure\cite{kpmg}). These radical cost savings can be passed on to savers. The lower operating costs will also enable new up-and-coming Portfolio Managers to enter the market by reducing minimum scale requirements and start up costs.
+
+The cost of running a portfolio on the Blockchain is equal to the core licensing fees, modular commissions and the infrastructure costs to be paid on the Ethereum platform (see Figure \ref{fig:fees}). 
+
+The licensing fees are set by the protocol and the modular fees are set by the module developers. Both of them are expected to be a fraction of a cent for each usage.
+
+The infrastructure costs are equal to the \textit{gas} used for the execution of the underlying smart contracts. The gas costs are dependent on the \textit{gas price} set for the transactions and the \textit{amount of gas} used in executing these smart contracts\cite{yellow}.
+
+In conclusion, by having low set up requirements and low costs of running a portfolio one can create a never-seen-before competitive environment for asset management strategies.
+
+\end{multicols}
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=135mm]{"images/Variable Costs".jpg}
+	\caption{Variable Costs of a Melon protocol portfolio}
+	\label{fig:fees}
+\end{figure}
+
+\begin{multicols}{2}
+
+\section{Decentralised}\label{sec:decentralised}
+
+A Melon protocol portfolio can be \textit{set up}, \textit{managed} and \textit{invested in}, using a decentralised technological infrastructure relying on the Ethereum Blockchain.
+
+In this context, one can differentiate between \textit{decentralised storage} and \textit{decentralised execution}.
+
+\subsection{Decentralised Storage}
+
+All of the Melon protocol's smart-contracts, portfolio track records and assets are stored on a decentralised Blockchain. 
+
+Storing smart-contracts and portfolio track records in a decentralised way mitigates the risks around single points of failure and provides open and reliable storage of information.
+
+Storing portfolio assets in a decentralised way, reduces custody risks.
+
+Incidents like the financial crisis of 2008 and the 2013 bank deposit levy in Cyprus have taken a heavy toll on the trust of centralised custodians. Legislation of \textit{bail-ins} in many developed countries doesn't help either\cite{bailinsch}\cite{bailinseu}.
+
+\subsection{Decentralised Execution}
+
+Execution of the smart-contracts is done in a decentralised manner using the Ethereum virtual machine (EVM) which is distributed onto all nodes connected to the Ethereum network. The result is generally more efficiency, security and predictability. Most notably, counterparty and settlement risks of trades are reduced significantly.
+
+In conclusion, by having decentralised storage and execution one can mitigate some of the potential security vulnerabilities and market inefficiencies, such as reducing single points of failure, custody-, counterparty-, and settlement risks.
+
+\section{Protocol Development}\label{sec:protocoldevelopment}
+
+To build the Melon protocol and strengthen the network effect, there will be a digital token issued. This token is called the \textit{Melon token} (MLN) and will be distributed through a crowd-sale. 
+
+Through the usage of the core, licensing fees are generated. These are collected and proportionally redistributed back to the Backers of the Melon protocol, i.e. MLN Holders.
+
+\section{Future Directions}\label{sec:futuredirections}
+
+To drive adoption, there will be portals\footnote{One example for a portal is the Melon portal: \url{https://melonport.com}.}. These are user-friendly web applications to access the Melon protocol. This will allow users to interact with the protocol easily.
+
+The value of the protocol is directly correlated with the value of these portals. The better and easier the portals, the more licensing fees will be collected and redistributed.
+
+\section{Conclusion}\label{sec:conc}
+
+The Melon protocol proposed a network protocol for digital asset management on the Ethereum platform. It enables participants to set up, manage and invest in digital asset management strategies in an open, competitive and decentralised manner.
+
+\section{Acknowledgements}
+
+We would like to use this opportunity to express our gratitude to everyone who supported us throughout the course of writing this paper.
+
+A special thanks to Garrett Cassidy, André Wolke, Roman Bischoff, Jorge Mielgo, Sandro Lera, Dylan Grice and Andrey Ternovsky for their support, feedback and improvements to this paper.
+
+\bibliography{Biblio}
+\bibliographystyle{abbrv}
+\end{multicols}
+
+\appendix
+
+\section{Terminology}\label{app:term}
+
+\begin{description}
+\item[Token] By the term token is meant, a digital token of value adhering to the Ethereum token standard \cite{tokenstandard}.
+\item[Portfolio] A collection of smart-contracts, divided into a core smart-contract(s) and into auxiliary smart-contracts called modules.
+\item[Portfolio Manager] Portfolios are managed by one person or a group of persons, referred to as a Portfolio Manager.
+\item[Module] A module is on or a set of smart-contracts which has an auxiliary functionality to the core smart-contract of the portfolio.
+\item[Time Step] The term time step means, the time interval between blocks on the Ethereum Blockchain. Where time is taken from the block timestamp issued by the miner. For example $(t_i, t_{i+1}]$ is the time between after block with timestamp $t_i$ and the following block with timestamp $t_{i+1}$.
+	
+\end{description}
+
+\section{Portfolio}\label{app:defportfolio}
+
+Formally we expand the portfolio as follows. Assuming there are $n \in \mathbb{N}$ digital assets available. This constitutes the following vector set $\underline{a}$ of assets:
+\begin{equation}
+	\underline{a} = \begin{pmatrix}a_{1}\\ \vdots \\ a_{n}\end{pmatrix}
+\end{equation}
+where $a_k$ is the k-th available asset, for $k \in \mathbb{N}$.
+By convention the first asset $a_1$ represents Ether.
+
+Then the \textit{portfolio} $\underline{h}_m^{t_i}$, is defined as the vector set of asset holdings of a portfolio $m$ at time $t_i$.
+\begin{equation}
+	\underline{h}_m^{t_i} = \begin{pmatrix}h_{a_{1}}^{t_i}\\ \vdots \\ h_{a_{n}}^{t_i}\end{pmatrix} \in \mathbb{R}_{\geq 0}^n
+\end{equation}
+where $h_{a_{k}}^{t_i}$ is the amount, in token units of $a_k$, a portfolio $m$ holds at time $t_i$, for $k \in \mathbb{N}$.
+
+\section{Gross Asset Value}\label{app:defgav}
+
+Let $\underline{p}^{t_i}$ be the vector set of asset prices, at time $t_i$. Then $\underline{p}^{t_i}$ is:
+\begin{equation}
+	\underline{p}^{t_i} = \begin{pmatrix}p_{a_{1}}^{t_i}\\ \vdots \\ p_{a_{n}}^{t_i}\end{pmatrix} \in \mathbb{R}_{\geq 0}^n
+\end{equation}
+where $p_{a_{k}}^{t_i}$ is the price per token unit of asset $a_k$ in Ether, at time $t_i$, for $k \in \mathbb{N}$.
+
+Note, since by convention $a_1$ represents Ether, and the prices are given in Ether the first price $p_{a_{1}}^{t_i}$ is always equal to one.
+
+The Gross Asset Value or \textit{GAV} $\hat{v}_{h_m}^{t_i}$ in Ether of portfolio $\underline{h}_m^{t_i}$ at time $t_i$ is:
+\begin{equation}
+	\hat{v}_{h_m}^{t_i} = \langle \underline{p}^{t_i}, \underline{h}_m^{t_i}\rangle = \sum_{k=1}^{n} p_{a_{k}}^{t_i}h_{a_{k}}^{t_i}
+\end{equation}
+with the standard scalar product on $\mathbb{R}^n$. The GAV can be seen as the gross \textit{value} of the portfolio.
+
+\section{Net Asset Value}\label{app:defnav}
+
+The Net Asset Value or \textit{NAV} $v_{h_m}^{t_i}$ in Ether of portfolio $\underline{h}_m^{t_i}$ at time $t_i$ is:
+\begin{equation}
+v_{h_m}^{t_i} = \hat{v}_{h_m}^{t_i} - \textit{Management Fees}^{t_i} - \textit{Performance Fees}^{t_i}
+\end{equation}
+
+$\textit{Management Fees}^{t_i}$ resp. $\textit{Performance Fees}^{t_i}$ is the management resp. performance fees given to the Portfolio Manager for timestep $t_i$.
+
+\section{Delta}\label{app:defdelta}
+
+To define the \textit{Delta} $\Delta_{(t_i, t_j]}$ of a portfolio $m$, within the time $(t_i, t_j]$, where $t_i < t_j$, we first define the Delta of $\Delta_{(t_i, t_{i+1}]}$, i.e. the Delta of a single time step.
+Let be:
+\begin{eqnarray*}
+	t_0 &=& \textit{time of contract creation} \\
+	t_l &=& \textit{time of first investment} \\
+	&=& \min_{t_k \in [t_0, t_i]} \{v_{h_m}^{t_k} \neq 0\} \\
+	I^{t_i} &=& \textit{Sum of all investments within $(t_{i-1}, t_i]$} \\
+	W^{t_i} &=& \textit{Sum of all withdrawals within $(t_{i-1}, t_i]$}
+\end{eqnarray*}
+Where both $I^{t_i}$ and $W^{t_i}$ is a value in Ether. Then the Delta of a single time step is:
+\begin{equation}
+	\Delta_{(t_i, t_{i+1}]} = 
+		\frac{v_{h_m}^{t_{i+1}} - 
+			I^{t_{i +1}} + W^{t_{i +1}}}{v_{h_m}^{t_i}}
+\end{equation}
+
+By design, the Delta of a portfolio, is independent of funds invested or withdrawn within the time $(t_i, t_{i+1}]$. By factoring together these Deltas of single time steps we get the general definition of the Delta $\Delta_{(t_i, t_j]}$ of a portfolio $m$ as:
+\begin{equation}
+	\Delta_{(t_i, t_j]} = \begin{cases}
+		1 & \text{if} \quad t_j \leq t_l \\
+		\prod\limits_{k = l}^{j - 1} \Delta_{(t_k, t_{k + 1}]} & \text{if} \quad t_i < t_l < t_j \wedge  v_{h_m}^{t_k} \neq 0, \, k \in \{l, l + 1, \hdots, j - 1\}\\
+		\prod\limits_{k = i}^{j - 1} \Delta_{(t_k, t_{k + 1}]} & \text{if} \quad t_l \leq t_i \wedge  v_{h_m}^{t_k} \neq 0, \, k \in \{i, i + 1, \hdots, j - 1\}\\
+		0 & \text{otherwise}
+	\end{cases}
+\end{equation}
+Note, the case where $t_i < t_l < t_j$ and $v_{h_m}^{t_k} = 0$, for a $k \in \{l, l + 1, \hdots, j - 1\}$ is when the first investment has been made but the funds have been withdrawn completely at some point within time $(t_l, t_{j-1}]$. The GAV in this case can not be calculated by factoring together Deltas of single time steps, as this would mean a division through zero. The Delta in this case is set to $0$ for all times, even if the portfolio receives investments in the future. The same is true for the second similar case where $t_l \leq t_i$ and $v_{h_m}^{t_k} = 0$, for a $k \in \{i, i + 1, \hdots, j - 1\}$.
+
+By induction, we can see that the Delta $\Delta_{(t_i, t_j]}$ remains independent of funds invested or withdrawn within the time $(t_i, t_j]$.
+
+\section{Net Asset Value per Share}\label{app:defnavps}
+
+Expressed mathematically the \textit{NAV} per share $p_{m}^{t_i}$  of portfolio $m$, at time $t_i$ is:
+\begin{equation}
+	p_{m}^{t_i} = \Delta_{(t_0, t_i]}
+\end{equation}
+
+where $t_0$ is the time of contract creation. The price $p_{m}^{t_i}$ is denominated in Ether. 
+
+\section{Share Price}\label{app:defshareprice}
+
+The share price is defined by the Net Asset Value per Share (see appendix \ref{app:defnavps}) and is denominated in Ether.
+	
+\end{document}
+
+
+
+
+
+
